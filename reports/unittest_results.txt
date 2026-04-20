@@ -22,6 +22,6 @@ test_resolve_url (test_hf_ingest.HfIngestTests.test_resolve_url) ... ok
 test_safe_local_name (test_hf_ingest.HfIngestTests.test_safe_local_name) ... ok
 
 ----------------------------------------------------------------------
-Ran 22 tests in 0.001s
+Ran 22 tests in 0.002s
 
 OK
