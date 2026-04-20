@@ -1,0 +1,23 @@
+{
+  "candidate_csv": "/Users/randy/btc5m_tail_flip_research_pack/data/real_candidates_hf_brock_offline_2026-03-06_to_2026-03-13.csv",
+  "fill_rate": 0.13451957295373665,
+  "filled_shares": 73201.16591200001,
+  "fills_partial_or_full": 189,
+  "pnl": -260.1764682399995,
+  "risk": 1340.1463182399993,
+  "roi_on_risk": -0.1941403447510766,
+  "signals": 1405,
+  "trade_files": [
+    "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/trades__2026-03-06.parquet",
+    "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/trades__2026-03-07.parquet",
+    "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/trades__2026-03-08.parquet",
+    "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/trades__2026-03-09.parquet",
+    "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/trades__2026-03-10.parquet",
+    "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/trades__2026-03-11.parquet",
+    "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/trades__2026-03-12.parquet",
+    "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/trades__2026-03-13.parquet"
+  ],
+  "warning": "Queue simulation assumes Brock trade `side` is taker side. Validate against raw CLOB user fills before live trading.",
+  "win_rate_after_fill": 0.015873015873015872,
+  "wins_after_fill": 3
+}

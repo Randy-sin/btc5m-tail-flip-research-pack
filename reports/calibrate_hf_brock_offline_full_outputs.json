@@ -1,0 +1,11 @@
+{
+  "calibration_csv": "/Users/randy/btc5m_tail_flip_research_pack/reports/price_bucket_b_decile_hf_brock_offline_2026-03-06_to_2026-03-13.csv",
+  "gross_pnl_usd_fixed_0_05pct": 5225.0,
+  "input_csv": "/Users/randy/btc5m_tail_flip_research_pack/data/real_candidates_hf_brock_offline_2026-03-06_to_2026-03-13.csv",
+  "observations": 2475,
+  "risked_usd": 7025.0,
+  "roi_on_risk": 0.7437722419928826,
+  "trades": 1405,
+  "win_rate": 0.026334519572953737,
+  "wins": 37
+}

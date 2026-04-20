@@ -1,0 +1,11 @@
+{
+  "calibration_csv": "/Users/randy/btc5m_tail_flip_research_pack/reports/b_factor_calibration.csv",
+  "gross_pnl_usd_fixed_0_05pct": 14440.0,
+  "input_csv": "/Users/randy/btc5m_tail_flip_research_pack/data/fixtures/btc5m_tail_fixture.csv",
+  "observations": 1098,
+  "risked_usd": 3060.0,
+  "roi_on_risk": 4.718954248366013,
+  "trades": 612,
+  "win_rate": 0.08169934640522876,
+  "wins": 50
+}

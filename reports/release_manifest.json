@@ -1,0 +1,87 @@
+{
+  "aliplayer_candidate_rows": 83,
+  "aliplayer_queue_fills": 0,
+  "aliplayer_raw_download": "completed",
+  "aliplayer_signal_trades": 46,
+  "created_at_utc": "2026-04-20T02:33:52.717974+00:00",
+  "files": [
+    {
+      "bytes": 5458,
+      "path": "README.md",
+      "sha256": "750d945f0a6c72d93d6c88b0a9920cc0ccdb5e7fe9b7278f02faa6bf9c8fab36"
+    },
+    {
+      "bytes": 6363,
+      "path": "docs/FINAL_RUN_REPORT.md",
+      "sha256": "0be678a8828697066b116fd768533a07b1a3c01f55600f9996ed9f6668c5a718"
+    },
+    {
+      "bytes": 3062,
+      "path": "reports/final_run_all_tests_stdout.txt",
+      "sha256": "b7f42fcb4f8d6b758eeec1dfc8711bfcdb642ccfe0604e8ab5bd70af998bca67"
+    },
+    {
+      "bytes": 513,
+      "path": "reports/aliplayer_raw_files_manifest.csv",
+      "sha256": "05629857b03a43ddb34258942b895cc25e41f557e24639147f5817c1ca4a717a"
+    },
+    {
+      "bytes": 336,
+      "path": "reports/build_candidates_aliplayer_duckdb_summary.json",
+      "sha256": "aa23e55855cbbd13984887853e242214389444e2fb3851b0057e53e399c4ddf8"
+    },
+    {
+      "bytes": 428,
+      "path": "reports/backtest_summary_aliplayer_btc5m_full.json",
+      "sha256": "22db3dca673446b3dbc0abf7ac31b3b7b7e83c38f91480ca11e378454f3b0d2b"
+    },
+    {
+      "bytes": 588,
+      "path": "reports/queue_fill_sim_aliplayer_btc5m_full_summary.json",
+      "sha256": "f115f6c87f01d2a728ce8c6fe15bc7c6c1a87fec70b4c7a771effa61b1cd713c"
+    },
+    {
+      "bytes": 31400,
+      "path": "data/real_candidates_aliplayer_btc5m_full.csv",
+      "sha256": "5096ba357526f0f1a12c6c6e8b0a19ee8488fe7e056c14e57d6cc0d2664de393"
+    },
+    {
+      "bytes": 967,
+      "path": "reports/price_bucket_b_decile_aliplayer_btc5m_full.csv",
+      "sha256": "ad1d7862cde6ecd59be9f5c45af36a248ef28c2ee62979f6b6cb5c6655991371"
+    },
+    {
+      "bytes": 890,
+      "path": "reports/b_decile_table_aliplayer_btc5m_full.csv",
+      "sha256": "6d8f08d9a6139564ec756398708216545ed87914f34fa01f8022a827fcb00043"
+    }
+  ],
+  "live_readiness": "not approved; corrected full aliplayer queue-aware replay has zero fills",
+  "raw_files_not_zipped": [
+    {
+      "bytes": 10013190,
+      "path": "data/hf_aliplayer_btc_core/data__markets.parquet"
+    },
+    {
+      "bytes": 6486023775,
+      "path": "data/hf_aliplayer_btc_core/data__orderbook__crypto=BTC__timeframe=5-minute__part-0.parquet"
+    },
+    {
+      "bytes": 11781729,
+      "path": "data/hf_aliplayer_btc_core/data__prices__crypto=BTC__timeframe=5-minute__part-0.parquet"
+    },
+    {
+      "bytes": 130144073,
+      "path": "data/hf_aliplayer_btc_core/data__spot_prices__part-0.parquet"
+    },
+    {
+      "bytes": 2642085836,
+      "path": "data/hf_aliplayer_btc_core/data__ticks__crypto=BTC__timeframe=5-minute__part-0.parquet"
+    },
+    {
+      "bytes": 1489,
+      "path": "data/hf_aliplayer_btc_core/download_manifest.json"
+    }
+  ],
+  "unit_tests": "22 passed"
+}

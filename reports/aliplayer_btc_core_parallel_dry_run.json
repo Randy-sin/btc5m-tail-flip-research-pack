@@ -1,0 +1,27 @@
+[
+  {
+    "remote_path": "data/markets.parquet",
+    "target": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_aliplayer_btc_core/data__markets.parquet",
+    "url": "https://huggingface.co/datasets/aliplayer1/polymarket-crypto-updown/resolve/main/data/markets.parquet"
+  },
+  {
+    "remote_path": "data/prices/crypto=BTC/timeframe=5-minute/part-0.parquet",
+    "target": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_aliplayer_btc_core/data__prices__crypto=BTC__timeframe=5-minute__part-0.parquet",
+    "url": "https://huggingface.co/datasets/aliplayer1/polymarket-crypto-updown/resolve/main/data/prices/crypto=BTC/timeframe=5-minute/part-0.parquet"
+  },
+  {
+    "remote_path": "data/spot_prices/part-0.parquet",
+    "target": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_aliplayer_btc_core/data__spot_prices__part-0.parquet",
+    "url": "https://huggingface.co/datasets/aliplayer1/polymarket-crypto-updown/resolve/main/data/spot_prices/part-0.parquet"
+  },
+  {
+    "remote_path": "data/ticks/crypto=BTC/timeframe=5-minute/part-0.parquet",
+    "target": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_aliplayer_btc_core/data__ticks__crypto=BTC__timeframe=5-minute__part-0.parquet",
+    "url": "https://huggingface.co/datasets/aliplayer1/polymarket-crypto-updown/resolve/main/data/ticks/crypto=BTC/timeframe=5-minute/part-0.parquet"
+  },
+  {
+    "remote_path": "data/orderbook/crypto=BTC/timeframe=5-minute/part-0.parquet",
+    "target": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_aliplayer_btc_core/data__orderbook__crypto=BTC__timeframe=5-minute__part-0.parquet",
+    "url": "https://huggingface.co/datasets/aliplayer1/polymarket-crypto-updown/resolve/main/data/orderbook/crypto=BTC/timeframe=5-minute/part-0.parquet"
+  }
+]

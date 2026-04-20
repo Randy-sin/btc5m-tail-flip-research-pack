@@ -1,0 +1,11 @@
+{
+  "fixture_rows_written": 1098,
+  "gross_pnl_usd_fixed_0_05pct": 14440.0,
+  "observations": 1098,
+  "risked_usd": 3060.0,
+  "roi_on_risk": 4.718954248366013,
+  "trades": 612,
+  "warning": "Synthetic fixture only. This validates code/math, not real Polymarket profitability.",
+  "win_rate": 0.08169934640522876,
+  "wins": 50
+}

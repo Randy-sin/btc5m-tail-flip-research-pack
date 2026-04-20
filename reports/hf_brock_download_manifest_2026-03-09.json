@@ -1,0 +1,38 @@
+[
+  {
+    "bytes_written": 776357,
+    "local_path": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/markets__all.parquet",
+    "remote_path": "markets/all.parquet",
+    "repo": "BrockMisner/polymarket-crypto-5m-15m"
+  },
+  {
+    "bytes_written": 804807,
+    "local_path": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/resolutions__all.parquet",
+    "remote_path": "resolutions/all.parquet",
+    "repo": "BrockMisner/polymarket-crypto-5m-15m"
+  },
+  {
+    "bytes_written": 7531614,
+    "local_path": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/orderbooks__2026-03-09.parquet",
+    "remote_path": "orderbooks/2026-03-09.parquet",
+    "repo": "BrockMisner/polymarket-crypto-5m-15m"
+  },
+  {
+    "bytes_written": 97070221,
+    "local_path": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/trades__2026-03-09.parquet",
+    "remote_path": "trades/2026-03-09.parquet",
+    "repo": "BrockMisner/polymarket-crypto-5m-15m"
+  },
+  {
+    "bytes_written": 119121,
+    "local_path": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/crypto_prices__2026-03-09.parquet",
+    "remote_path": "crypto_prices/2026-03-09.parquet",
+    "repo": "BrockMisner/polymarket-crypto-5m-15m"
+  },
+  {
+    "bytes_written": 192315,
+    "local_path": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_brock/price_history__2026-03-09.parquet",
+    "remote_path": "price_history/2026-03-09.parquet",
+    "repo": "BrockMisner/polymarket-crypto-5m-15m"
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "data_dir": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_aliplayer_btc_core",
+  "elapsed_s": 60.62841773033142,
+  "out": "/Users/randy/btc5m_tail_flip_research_pack/data/real_candidates_aliplayer_btc5m_full.csv",
+  "rows": 83,
+  "source": "aliplayer1/polymarket-crypto-updown BTC 5m orderbook + spot_prices",
+  "threads": 8
+}

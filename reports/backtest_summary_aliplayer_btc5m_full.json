@@ -1,0 +1,11 @@
+{
+  "calibration_csv": "/Users/randy/btc5m_tail_flip_research_pack/reports/price_bucket_b_decile_aliplayer_btc5m_full.csv",
+  "gross_pnl_usd_fixed_0_05pct": 2770.0000670552267,
+  "input_csv": "/Users/randy/btc5m_tail_flip_research_pack/data/real_candidates_aliplayer_btc5m_full.csv",
+  "observations": 83,
+  "risked_usd": 230.0,
+  "roi_on_risk": 12.04347855241403,
+  "trades": 46,
+  "win_rate": 0.1956521739130435,
+  "wins": 9
+}

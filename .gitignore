@@ -1,0 +1,30 @@
+.DS_Store
+Thumbs.db
+
+# Python/runtime artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv*/
+venv/
+env/
+
+# Local secrets
+.env
+
+# Raw downloaded datasets are reproducible via scripts and too large for Git.
+data/hf_aliplayer/
+data/hf_aliplayer_btc_core/
+data/hf_brock/
+data/public_snapshots/
+data/cache/
+*.parquet
+
+# Local release bundles and scratch archives
+*.zip
+*.tar.gz
+
+# Noisy long-running command logs
+reports/*_stdout.jsonl

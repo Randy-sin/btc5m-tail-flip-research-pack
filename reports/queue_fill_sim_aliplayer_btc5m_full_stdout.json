@@ -1,0 +1,15 @@
+{
+  "candidate_csv": "/Users/randy/btc5m_tail_flip_research_pack/data/real_candidates_aliplayer_btc5m_full.csv",
+  "dedupe_market_side_price": true,
+  "fill_rate": 0.0,
+  "filled_shares": 0.0,
+  "fills_partial_or_full": 0,
+  "pnl": 0.0,
+  "risk": 0.0,
+  "roi_on_risk": 0.0,
+  "signals": 28,
+  "ticks_path": "/Users/randy/btc5m_tail_flip_research_pack/data/hf_aliplayer_btc_core/data__ticks__crypto=BTC__timeframe=5-minute__part-0.parquet",
+  "warning": "Uses aliplayer ticks side as taker perspective and size_usdc/price as shares.",
+  "win_rate_after_fill": 0.0,
+  "wins_after_fill": 0
+}

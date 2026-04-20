@@ -1,0 +1,20 @@
+strategy:
+  min_time_remaining_s: 8
+  max_time_remaining_s: 120
+  cancel_time_remaining_s: 6
+  max_tail_price_maker: 0.02
+  allow_fok: false
+  min_b_ratio: 1.15
+  min_abs_edge_maker_1c: 0.0015
+  min_abs_edge_maker_2c: 0.0035
+  min_abs_edge_fok_2c: 0.0060
+
+risk:
+  quarter_kelly_multiplier: 0.25
+  max_single_trade_pct: 0.0005
+  max_window_risk_pct: 0.0010
+  daily_tail_risk_pct: 0.006
+
+data:
+  normalized_csv: data/real_btc5m_history.csv
+  raw_live_dir: data/raw_live

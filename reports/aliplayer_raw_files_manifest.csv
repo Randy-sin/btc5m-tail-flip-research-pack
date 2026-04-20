@@ -1,0 +1,6 @@
+path,bytes,rows,row_groups
+data/hf_aliplayer_btc_core/data__markets.parquet,10013190,79009,1
+data/hf_aliplayer_btc_core/data__orderbook__crypto=BTC__timeframe=5-minute__part-0.parquet,6486023775,3075617018,24848
+data/hf_aliplayer_btc_core/data__prices__crypto=BTC__timeframe=5-minute__part-0.parquet,11781729,5540608,6
+data/hf_aliplayer_btc_core/data__spot_prices__part-0.parquet,130144073,22802138,22
+data/hf_aliplayer_btc_core/data__ticks__crypto=BTC__timeframe=5-minute__part-0.parquet,2642085836,76717754,623

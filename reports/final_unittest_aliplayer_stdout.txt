@@ -1,0 +1,27 @@
+test_nearest_spot (test_aliplayer_full.AliplayerFullTests.test_nearest_spot) ... ok
+test_safe_div (test_aliplayer_full.AliplayerFullTests.test_safe_div) ... ok
+test_b_ratio_is_model_prob_over_break_even (test_b_factor.BFactorTests.test_b_ratio_is_model_prob_over_break_even) ... ok
+test_b_score_increases_with_time_pressure_and_volatility (test_b_factor.BFactorTests.test_b_score_increases_with_time_pressure_and_volatility) ... ok
+test_aggregate_calibration (test_calibration.CalibrationTests.test_aggregate_calibration) ... ok
+test_deciles_length_and_range (test_calibration.CalibrationTests.test_deciles_length_and_range) ... ok
+test_posterior_prob_edge_positive (test_calibration.CalibrationTests.test_posterior_prob_edge_positive) ... ok
+test_wilson_interval_bounds (test_calibration.CalibrationTests.test_wilson_interval_bounds) ... ok
+test_gamma_meta_extracts_price_and_tokens (test_candidate_builder.CandidateBuilderTests.test_gamma_meta_extracts_price_and_tokens) ... ok
+test_levels_size_at (test_candidate_builder.CandidateBuilderTests.test_levels_size_at) ... ok
+test_parse_window_start (test_candidate_builder.CandidateBuilderTests.test_parse_window_start) ... ok
+test_evaluate_1c_trade_when_model_edge_high (test_core.CoreMathTests.test_evaluate_1c_trade_when_model_edge_high) ... ok
+test_evaluate_rejects_too_late (test_core.CoreMathTests.test_evaluate_rejects_too_late) ... ok
+test_kelly_binary (test_core.CoreMathTests.test_kelly_binary) ... ok
+test_model_probability_symmetry_near_strike (test_core.CoreMathTests.test_model_probability_symmetry_near_strike) ... ok
+test_taker_fee_formula_crypto (test_core.CoreMathTests.test_taker_fee_formula_crypto) ... ok
+test_queue_aware_full_fill (test_fill_sim.FillSimulationTests.test_queue_aware_full_fill) ... ok
+test_queue_aware_partial_fill (test_fill_sim.FillSimulationTests.test_queue_aware_partial_fill) ... ok
+test_wrong_side_does_not_fill (test_fill_sim.FillSimulationTests.test_wrong_side_does_not_fill) ... ok
+test_brock_paths_include_core_tables (test_hf_ingest.HfIngestTests.test_brock_paths_include_core_tables) ... ok
+test_resolve_url (test_hf_ingest.HfIngestTests.test_resolve_url) ... ok
+test_safe_local_name (test_hf_ingest.HfIngestTests.test_safe_local_name) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.003s
+
+OK
