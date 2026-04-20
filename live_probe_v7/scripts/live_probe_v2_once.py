@@ -17,6 +17,7 @@ import os
 import sys
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Optional
 
 try:
@@ -24,10 +25,12 @@ try:
 except Exception:  # pragma: no cover
     load_dotenv = None
 
+PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+
 
 def _load_env() -> None:
     if load_dotenv:
-        load_dotenv()
+        load_dotenv(dotenv_path=PACKAGE_ROOT / ".env")
 
 
 @dataclass
