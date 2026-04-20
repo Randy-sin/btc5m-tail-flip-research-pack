@@ -172,7 +172,7 @@ def main() -> int:
         "token_id": cfg.token_id,
         "price": cfg.price,
         "size_shares": cfg.size_shares,
-        "risk_usd_if_full_fill": risk,
+        "max_collateral_units_if_full_fill": risk,
         "post_only": True,
         "order_type": "GTC",
         "cancel_after_s": cfg.cancel_after_s,
