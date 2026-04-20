@@ -20,8 +20,10 @@ test_wrong_side_does_not_fill (test_fill_sim.FillSimulationTests.test_wrong_side
 test_brock_paths_include_core_tables (test_hf_ingest.HfIngestTests.test_brock_paths_include_core_tables) ... ok
 test_resolve_url (test_hf_ingest.HfIngestTests.test_resolve_url) ... ok
 test_safe_local_name (test_hf_ingest.HfIngestTests.test_safe_local_name) ... ok
+test_accepts_open_tick_within_lag (test_live_probe_loop.ChainlinkOpenGuardTests.test_accepts_open_tick_within_lag) ... ok
+test_rejects_mid_window_first_tick_as_open (test_live_probe_loop.ChainlinkOpenGuardTests.test_rejects_mid_window_first_tick_as_open) ... ok
 
 ----------------------------------------------------------------------
-Ran 22 tests in 0.002s
+Ran 24 tests in 0.027s
 
 OK

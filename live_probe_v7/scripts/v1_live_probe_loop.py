@@ -103,6 +103,7 @@ class ChainlinkState:
         self.last_event_ts: Optional[float] = None
         self.last_arrival_ts: Optional[float] = None
         self.ticks: list[tuple[float, float]] = []
+        self.invalid_open_windows: set[int] = set()
 
     def on_message(self, msg: dict[str, Any]) -> bool:
         payload = msg.get("payload")
@@ -128,11 +129,16 @@ class ChainlinkState:
         self.ticks = [(ts, px) for ts, px in self.ticks if ts >= cutoff]
         return True
 
-    def open_for_window(self, window_ts: int) -> Optional[float]:
+    def open_for_window(self, window_ts: int, max_open_tick_lag_s: float) -> tuple[Optional[float], Optional[float], str]:
+        if window_ts in self.invalid_open_windows:
+            return None, None, "open_tick_late"
         for ts, px in self.ticks:
             if ts >= window_ts:
-                return px
-        return None
+                if ts - window_ts > max_open_tick_lag_s:
+                    self.invalid_open_windows.add(window_ts)
+                    return None, ts, "open_tick_late"
+                return px, ts, "ok"
+        return None, None, "missing_tick"
 
     def sigma_per_s(self, since_ts: float, default: float) -> float:
         pts = [(ts, px) for ts, px in self.ticks if ts >= since_ts and px > 0]
@@ -258,6 +264,60 @@ def collateral_balance_micro(client: Any) -> int:
     return int(data.get("balance") or 0)
 
 
+def _level_to_dict(level: Any) -> dict[str, Optional[float]]:
+    """Normalize py-clob-client orderbook levels to price/size floats."""
+    if isinstance(level, dict):
+        price = level.get("price")
+        size = level.get("size")
+    else:
+        price = getattr(level, "price", None)
+        size = getattr(level, "size", None)
+    try:
+        price_f = float(price)
+    except (TypeError, ValueError):
+        price_f = None
+    try:
+        size_f = float(size)
+    except (TypeError, ValueError):
+        size_f = None
+    return {"price": price_f, "size": size_f}
+
+
+def get_book_snapshot(client: Any, token_id: str, target_price: float) -> dict[str, Any]:
+    """Read a compact orderbook snapshot for queue/1c diagnostics."""
+    book = client.get_order_book(token_id)
+    bids = [_level_to_dict(level) for level in (getattr(book, "bids", None) or [])]
+    asks = [_level_to_dict(level) for level in (getattr(book, "asks", None) or [])]
+    bids = [level for level in bids if level["price"] is not None and level["size"] is not None]
+    asks = [level for level in asks if level["price"] is not None and level["size"] is not None]
+    best_bid = max((level["price"] for level in bids), default=None)
+    best_ask = min((level["price"] for level in asks), default=None)
+    target_bid_size = sum(
+        float(level["size"] or 0.0)
+        for level in bids
+        if abs(float(level["price"] or 0.0) - target_price) < 1e-9
+    )
+    target_ask_size = sum(
+        float(level["size"] or 0.0)
+        for level in asks
+        if abs(float(level["price"] or 0.0) - target_price) < 1e-9
+    )
+    return {
+        "asset_id": getattr(book, "asset_id", None),
+        "market": getattr(book, "market", None),
+        "timestamp": getattr(book, "timestamp", None),
+        "hash": getattr(book, "hash", None),
+        "min_order_size": getattr(book, "min_order_size", None),
+        "tick_size": getattr(book, "tick_size", None),
+        "best_bid": best_bid,
+        "best_ask": best_ask,
+        "target_bid_size": target_bid_size,
+        "target_ask_size": target_ask_size,
+        "top_bids": sorted(bids, key=lambda level: float(level["price"] or 0.0), reverse=True)[:5],
+        "top_asks": sorted(asks, key=lambda level: float(level["price"] or 0.0))[:5],
+    }
+
+
 def post_gtc(client: Any, token_id: str, price: float, size_shares: float, neg_risk: bool) -> dict[str, Any]:
     from py_clob_client.clob_types import OrderArgs, OrderType, PartialCreateOrderOptions
     from py_clob_client.order_builder.constants import BUY
@@ -350,6 +410,45 @@ async def rtds_loop(state: ChainlinkState, log_path: Path, stop_event: asyncio.E
             await asyncio.sleep(3)
 
 
+async def heartbeat_loop(client: Any, log_path: Path, stop_event: asyncio.Event, interval_s: float) -> None:
+    """Keep CLOB GTC orders alive while the probe is running."""
+    heartbeat_id: Optional[str] = None
+    last_ok_log = 0.0
+    loop = asyncio.get_running_loop()
+    log_jsonl(log_path, {"event": "heartbeat_start", "interval_s": interval_s})
+    while not stop_event.is_set():
+        try:
+            response = await loop.run_in_executor(None, client.post_heartbeat, heartbeat_id)
+            new_id = response.get("heartbeat_id") if isinstance(response, dict) else None
+            if new_id:
+                if heartbeat_id != str(new_id):
+                    heartbeat_id = str(new_id)
+                    log_jsonl(log_path, {"event": "heartbeat_id", "heartbeat_id": heartbeat_id})
+            now = time.time()
+            if now - last_ok_log >= 60:
+                log_jsonl(log_path, {"event": "heartbeat_ok", "heartbeat_id": heartbeat_id})
+                last_ok_log = now
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:
+            recovered_id = None
+            error_msg = getattr(exc, "error_msg", None)
+            if isinstance(error_msg, dict) and error_msg.get("heartbeat_id"):
+                recovered_id = str(error_msg["heartbeat_id"])
+            if recovered_id:
+                heartbeat_id = recovered_id
+            log_jsonl(
+                log_path,
+                {
+                    "event": "heartbeat_error",
+                    "error": type(exc).__name__,
+                    "message": str(exc)[:300],
+                    "recovered_heartbeat_id": recovered_id,
+                },
+            )
+        await asyncio.sleep(interval_s)
+
+
 async def probe_loop(args: argparse.Namespace) -> int:
     _load_env()
     if not os.getenv("POLY_PRIVATE_KEY") or not os.getenv("POLY_FUNDER_ADDRESS"):
@@ -380,11 +479,12 @@ async def probe_loop(args: argparse.Namespace) -> int:
             "order_price": args.price,
             "order_size_shares": args.size_shares,
             "per_order_collateral_units": per_order_collateral,
-            "max_filled_collateral_units": args.max_filled_collateral_units,
+            "max_filled_collateral_units_per_process": args.max_filled_collateral_units_per_process,
         },
     )
 
     rtds_task = asyncio.create_task(rtds_loop(state, log_path, stop_event))
+    heartbeat_task = asyncio.create_task(heartbeat_loop(client, log_path, stop_event, args.heartbeat_interval_s))
     open_order: Optional[OpenOrder] = None
     posted_keys: set[tuple[int, str]] = set()
     market_cache: dict[int, Market] = {}
@@ -427,9 +527,19 @@ async def probe_loop(args: argparse.Namespace) -> int:
                             },
                         )
                     status = str(order.get("status") or "").upper()
-                    if seconds_remaining <= args.cancel_at_t_minus_s and status not in {"CANCELED", "MATCHED", "FILLED"}:
+                    order_seconds_remaining = open_order.market.end_ts - now
+                    if order_seconds_remaining <= args.cancel_at_t_minus_s and status not in {"CANCELED", "MATCHED", "FILLED"}:
                         cancel_resp = client.cancel(open_order.order_id)
-                        log_jsonl(log_path, {"event": "cancel_sent", "order_id": open_order.order_id, "cancel_response": cancel_resp})
+                        log_jsonl(
+                            log_path,
+                            {
+                                "event": "cancel_sent",
+                                "order_id": open_order.order_id,
+                                "cancel_response": cancel_resp,
+                                "order_seconds_remaining": order_seconds_remaining,
+                                "order_market_slug": open_order.market.slug,
+                            },
+                        )
                         order = client.get_order(open_order.order_id)
                         log_jsonl(log_path, {"event": "post_cancel_check", "order_id": open_order.order_id, "order": order})
                         open_order = None
@@ -439,8 +549,15 @@ async def probe_loop(args: argparse.Namespace) -> int:
                 except Exception as exc:
                     log_jsonl(log_path, {"event": "order_postcheck_error", "order_id": open_order.order_id, "error": type(exc).__name__, "message": str(exc)[:300]})
 
-            if filled_collateral_units >= args.max_filled_collateral_units:
-                log_jsonl(log_path, {"event": "daily_cap_reached", "filled_collateral_units": filled_collateral_units})
+            if filled_collateral_units >= args.max_filled_collateral_units_per_process:
+                log_jsonl(
+                    log_path,
+                    {
+                        "event": "process_cap_reached",
+                        "filled_collateral_units": filled_collateral_units,
+                        "max_filled_collateral_units_per_process": args.max_filled_collateral_units_per_process,
+                    },
+                )
                 await asyncio.sleep(args.poll_seconds)
                 continue
             if open_order is not None:
@@ -458,10 +575,20 @@ async def probe_loop(args: argparse.Namespace) -> int:
                     last_decision_log = now
                 await asyncio.sleep(args.poll_seconds)
                 continue
-            open_px = state.open_for_window(window_ts)
+            open_px, open_tick_ts, open_status = state.open_for_window(window_ts, args.max_open_tick_lag_s)
             if open_px is None:
                 if now - last_decision_log > args.decision_log_interval:
-                    log_jsonl(log_path, {"event": "no_signal", "reason": "missing_window_open", "window_ts": window_ts})
+                    log_jsonl(
+                        log_path,
+                        {
+                            "event": "no_signal",
+                            "reason": "missing_reliable_window_open",
+                            "window_ts": window_ts,
+                            "open_status": open_status,
+                            "first_open_tick_ts": open_tick_ts,
+                            "max_open_tick_lag_s": args.max_open_tick_lag_s,
+                        },
+                    )
                     last_decision_log = now
                 await asyncio.sleep(args.poll_seconds)
                 continue
@@ -495,6 +622,7 @@ async def probe_loop(args: argparse.Namespace) -> int:
                 "token_id": token_id,
                 "seconds_remaining": seconds_remaining,
                 "open_price": open_px,
+                "open_tick_ts": open_tick_ts,
                 "ref_price": ref_px,
                 "sigma_intra_per_s": sigma_intra,
                 "sigma_hourly_per_s": sigma_hourly,
@@ -520,9 +648,47 @@ async def probe_loop(args: argparse.Namespace) -> int:
             decision["decision"] = "post"
             log_jsonl(log_path, decision)
             try:
+                try:
+                    book_snapshot = get_book_snapshot(client, token_id, args.price)
+                    log_jsonl(
+                        log_path,
+                        {
+                            "event": "pre_post_orderbook",
+                            "market_slug": market.slug,
+                            "condition_id": market.condition_id,
+                            "side": side,
+                            "token_id": token_id,
+                            "price": args.price,
+                            "size_shares": args.size_shares,
+                            "book": book_snapshot,
+                        },
+                    )
+                except Exception as book_exc:
+                    book_snapshot = None
+                    log_jsonl(
+                        log_path,
+                        {
+                            "event": "pre_post_orderbook_error",
+                            "market_slug": market.slug,
+                            "condition_id": market.condition_id,
+                            "side": side,
+                            "token_id": token_id,
+                            "error": type(book_exc).__name__,
+                            "message": str(book_exc)[:300],
+                        },
+                    )
                 response = post_gtc(client, token_id, args.price, args.size_shares, neg_risk=False)
                 order_id = response.get("orderID") or response.get("id") or response.get("order_id")
-                log_jsonl(log_path, {"event": "post_response", "response": response, "side": side, "market_slug": market.slug})
+                log_jsonl(
+                    log_path,
+                    {
+                        "event": "post_response",
+                        "response": response,
+                        "side": side,
+                        "market_slug": market.slug,
+                        "book": book_snapshot,
+                    },
+                )
                 posted_keys.add(key)
                 if response.get("success") and order_id:
                     open_order = OpenOrder(
@@ -548,7 +714,8 @@ async def probe_loop(args: argparse.Namespace) -> int:
                 log_jsonl(log_path, {"event": "shutdown_cancel_error", "order_id": open_order.order_id, "error": type(exc).__name__, "message": str(exc)[:300]})
         stop_event.set()
         rtds_task.cancel()
-        await asyncio.gather(rtds_task, return_exceptions=True)
+        heartbeat_task.cancel()
+        await asyncio.gather(rtds_task, heartbeat_task, return_exceptions=True)
         log_jsonl(log_path, {"event": "loop_stop", "filled_collateral_units": filled_collateral_units})
     return 0
 
@@ -557,8 +724,15 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--price", type=float, default=0.01)
     parser.add_argument("--size-shares", type=float, default=5.0)
-    parser.add_argument("--max-filled-collateral-units", type=float, default=3.0)
+    parser.add_argument(
+        "--max-filled-collateral-units",
+        "--max-filled-collateral-units-per-process",
+        dest="max_filled_collateral_units_per_process",
+        type=float,
+        default=3.0,
+    )
     parser.add_argument("--cancel-at-t-minus-s", type=float, default=6.0)
+    parser.add_argument("--heartbeat-interval-s", type=float, default=5.0)
     parser.add_argument("--min-seconds-remaining", type=float, default=8.0)
     parser.add_argument("--max-seconds-remaining", type=float, default=280.0)
     parser.add_argument("--min-b-score", type=float, default=0.58)
@@ -568,6 +742,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--default-sigma-intra-per-s", type=float, default=0.00008)
     parser.add_argument("--default-sigma-hourly-per-s", type=float, default=0.00006)
     parser.add_argument("--max-chainlink-arrival-age-s", type=float, default=8.0)
+    parser.add_argument("--max-open-tick-lag-s", type=float, default=5.0)
     parser.add_argument("--poll-seconds", type=float, default=1.0)
     parser.add_argument("--decision-log-interval", type=float, default=15.0)
     parser.add_argument("--log-jsonl", default=str(PACKAGE_ROOT / "reports" / "v1_live_probe_loop.jsonl"))
