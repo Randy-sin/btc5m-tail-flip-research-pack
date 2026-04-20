@@ -412,7 +412,7 @@ async def rtds_loop(state: ChainlinkState, log_path: Path, stop_event: asyncio.E
 
 async def heartbeat_loop(client: Any, log_path: Path, stop_event: asyncio.Event, interval_s: float) -> None:
     """Keep CLOB GTC orders alive while the probe is running."""
-    heartbeat_id: Optional[str] = None
+    heartbeat_id = ""
     last_ok_log = 0.0
     loop = asyncio.get_running_loop()
     log_jsonl(log_path, {"event": "heartbeat_start", "interval_s": interval_s})
@@ -437,6 +437,24 @@ async def heartbeat_loop(client: Any, log_path: Path, stop_event: asyncio.Event,
                 recovered_id = str(error_msg["heartbeat_id"])
             if recovered_id:
                 heartbeat_id = recovered_id
+                try:
+                    response = await loop.run_in_executor(None, client.post_heartbeat, heartbeat_id)
+                    new_id = response.get("heartbeat_id") if isinstance(response, dict) else None
+                    if new_id:
+                        heartbeat_id = str(new_id)
+                    log_jsonl(log_path, {"event": "heartbeat_retry_ok", "heartbeat_id": heartbeat_id})
+                    await asyncio.sleep(interval_s)
+                    continue
+                except Exception as retry_exc:
+                    log_jsonl(
+                        log_path,
+                        {
+                            "event": "heartbeat_retry_error",
+                            "error": type(retry_exc).__name__,
+                            "message": str(retry_exc)[:300],
+                            "heartbeat_id": heartbeat_id,
+                        },
+                    )
             log_jsonl(
                 log_path,
                 {
