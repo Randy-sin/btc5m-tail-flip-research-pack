@@ -497,7 +497,12 @@ async def probe_loop(args: argparse.Namespace) -> int:
             "order_price": args.price,
             "order_size_shares": args.size_shares,
             "per_order_collateral_units": per_order_collateral,
-            "max_filled_collateral_units_per_process": args.max_filled_collateral_units_per_process,
+            "max_filled_collateral_units_per_process": (
+                args.max_filled_collateral_units_per_process
+                if args.max_filled_collateral_units_per_process > 0
+                else None
+            ),
+            "process_cap_enabled": args.max_filled_collateral_units_per_process > 0,
         },
     )
 
@@ -567,7 +572,10 @@ async def probe_loop(args: argparse.Namespace) -> int:
                 except Exception as exc:
                     log_jsonl(log_path, {"event": "order_postcheck_error", "order_id": open_order.order_id, "error": type(exc).__name__, "message": str(exc)[:300]})
 
-            if filled_collateral_units >= args.max_filled_collateral_units_per_process:
+            if (
+                args.max_filled_collateral_units_per_process > 0
+                and filled_collateral_units >= args.max_filled_collateral_units_per_process
+            ):
                 log_jsonl(
                     log_path,
                     {
